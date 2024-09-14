@@ -42,7 +42,14 @@ class ReplayBuffer():
         if self.expert_data_ratio > 0:
             expert_data_quantity = int(batch_size * self.expert_data_ratio)
             random_batch = np.random.choice(max_mem, batch_size - expert_data_quantity)
-            expert_batch = np.random.choice(self.expert_data_cutoff, expert_data_quantity)
+            try:
+                expert_batch = np.random.choice(self.expert_data_cutoff, expert_data_quantity)
+            except:
+                print("Expert data not loaded")
+                print("self.expert_data_cutoff:", self.expert_data_cutoff)
+                print("expert_data_quantity:", expert_data_quantity)
+                # retunr an empty expert batch
+                expert_batch = np.array([])
             batch = np.concatenate((random_batch, expert_batch))
         else:
             batch = np.random.choice(max_mem, batch_size)
